@@ -12,6 +12,7 @@ const bodyParser = require('body-parser')
 //Auth Router  
 const authRouter=require("./routers/authRouter")
 const userRouter=require("./routers/userRouter")
+const orderRouter=require("./routers/orderRouter");
 
 //App initialization
 const app=express(); 
@@ -27,6 +28,13 @@ if(process.env.NODE_ENV==='production'){
     origin=process.env.CROS_ORIGIN
 }
 
+cloudinary.config({
+    cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+    api_key:process.env.CLOUDINARY_API_KEY,
+    api_secret:process.env.CLOUDINARY_API_SECERET
+  });
+
+  
 //App using middlewares
 //Cors used for body pars
 // parse various different custom JSON types as JSON
@@ -53,6 +61,7 @@ app.use(cookieParser());                       //Adding refreshToken to Cookies
 //Routers used in app 
 app.use("/auth",authRouter);                     //Authentication Router
 app.use("/user",userRouter);  
+app.use("/orders",orderRouter);
 
 //app is host on PORT || 4001
 app.listen(process.env.PORT || 4001,(req,res)=>{    

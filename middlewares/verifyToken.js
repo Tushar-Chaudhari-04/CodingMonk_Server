@@ -19,10 +19,12 @@ const verifyToken=(req,res,next)=>{
             if(verifyToken){
                 req._id=verifyToken.id;
                 next();
+            }else{
+                res.send(error(5200,"Token is Expired..."));
             }
         } catch (err) {
-            console.log("Token is Expired.Please Login again");
-            res.send(error(500,"Token is Expired.Please Login again"));
+            console.log("Token is Expired.Please Login again",err);
+            res.send(error(500,err));
         }
     } catch (err) {
         console.log("err",err);
