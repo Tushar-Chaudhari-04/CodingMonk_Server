@@ -12,13 +12,13 @@ const signupController = async (req, res) => {
 
     //Register Validations Start
     if (!firstName || !lastName || !email || !password || !mobileNo) {
-      res.send(error(400, "All fileds are mandatory..."));
+      return res.send(error(400, "All fileds are mandatory..."));
     }
 
     const oldUser =await User.findOne({email});
-
+    console.log("oldUser",oldUser);
     if (oldUser) {
-      res.send(error(409, "User already exists"));
+      return res.send(error(409, "User already exists"));
     }
 
     //Register Validations End
@@ -40,14 +40,14 @@ const signupController = async (req, res) => {
         const user = await newUser.save();
         const { password, ...userData } = user._doc;
       console.log("userData",userData)
-        res.send(success(201, userData));
+        return res.send(success(201, userData));
       }
     } catch {
-      res.send(error(500, "Error in user registration...Try after some time"));
+      return res.send(error(500, "Error in user registration...Try after some time"));
     }
   } catch (err) {
    // console.log("signup err", err);
-    res.send(error(500, err));
+   return res.send(error(500, err));
   }
 };
 
@@ -55,17 +55,18 @@ const loginController = async (req, res) => {
   try {
     console.log("req",req.body);
     const { email, password } = req.body;
-
+    console.log(email,password);
     //Login Validations Start
     if (!email || !password) {
-      res.send(error(400, "Both Email and Password are mandatory..."));
+      return res.send(error(400, "Both Email and Password are mandatory..."));
     }
 
     const user =await User.findOne({email});
-    console.log("login user",user,user.password);
   
-    !user && res.send(error(400, "Please use valid credentials..."));
-    
+    if(!user){
+      return res.send(error(400, "Please use valid credentials..."));
+    }
+    console.log("login user",user,user.password);
     const bytes = CryptoJS.AES.decrypt(
       user.password,
       process.env.SECRET_KEY
@@ -75,7 +76,7 @@ const loginController = async (req, res) => {
     const actualPassword=bytes.toString(CryptoJS.enc.Utf8);
     console.log("actualPassword",actualPassword)
     if(actualPassword!==password){
-        res.send(error(400, "Please use valid credentials..."));
+      return res.send(error(400, "Please use valid credentials..."));
     }
     //Login Validations End
 
@@ -87,14 +88,14 @@ const loginController = async (req, res) => {
             console.log("accessToken",accessToken,)
             res.send(success(200,{...userData,accessToken}));
         }else{
-          res.send(error(500,"Please use valid Credentials"))
+          return res.send(error(500,"Please use valid Credentials"))
         }
     } catch (err) {
-      res.send(500, "Error in login with the given credentials...");
+      return res.send(500, "Error in login with the given credentials...");
     }
   } catch (err) {
     console.log("error in login", err);
-    res.send(error(500, err));
+    return res.send(error(500, err));
   }
 };
 

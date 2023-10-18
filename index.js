@@ -27,6 +27,7 @@ console.log("process.env.NODE_ENV",process.env.NODE_ENV);
 if(process.env.NODE_ENV==='production'){
     origin=process.env.CROS_ORIGIN
 }
+console.log("CROS_ORIGIN",origin);
 
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
